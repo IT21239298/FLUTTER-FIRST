@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/expence.dart';
+import 'package:flutter_application_1/widgets/add_new_expence.dart';
+import 'package:flutter_application_1/widgets/expence_list.dart';
 
 class Expences extends StatefulWidget {
   const Expences({super.key});
@@ -8,6 +11,37 @@ class Expences extends StatefulWidget {
 }
 
 class _ExpencesState extends State<Expences> {
+  final List<ExpenceModel> _expenceList = [
+    ExpenceModel(
+      title: "Foodball",
+      amount: 12.5,
+      date: DateTime.now(),
+      category: Category.leasure,
+    ),
+    ExpenceModel(
+      title: "Carrot",
+      amount: 10,
+      date: DateTime.now(),
+      category: Category.food,
+    ),
+    ExpenceModel(
+      title: "Bag",
+      amount: 20,
+      date: DateTime.now(),
+      category: Category.travel,
+    ),
+  ];
+
+  //function to open a modal overlay
+  void _openAddExpenceOvrlay() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return AddNewExpence();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,15 +53,13 @@ class _ExpencesState extends State<Expences> {
           Container(
             color: Colors.yellow,
             child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.add,
-                color: Colors.black,
-                ),
-              ),
+              onPressed: _openAddExpenceOvrlay,
+              icon: const Icon(Icons.add, color: Colors.black),
             ),
+          ),
         ],
       ),
+      body: Column(children: [ExpenceList(expenceList: _expenceList)]),
     );
   }
 }
