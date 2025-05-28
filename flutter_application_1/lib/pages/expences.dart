@@ -32,12 +32,19 @@ class _ExpencesState extends State<Expences> {
     ),
   ];
 
+  //add new expence
+  void onAddNewExpence(ExpenceModel expence) {
+    setState(() {
+      _expenceList.add(expence);
+    });
+  }
+
   //function to open a modal overlay
   void _openAddExpenceOvrlay() {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return AddNewExpence();
+        return AddNewExpence(onAddExpence: onAddNewExpence);
       },
     );
   }

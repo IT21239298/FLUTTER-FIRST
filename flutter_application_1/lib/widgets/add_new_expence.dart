@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/expence.dart';
 
 class AddNewExpence extends StatefulWidget {
-  const AddNewExpence({super.key});
+  final void Function(ExpenceModel expence) onAddExpence;
+  const AddNewExpence({super.key, required this.onAddExpence});
 
   @override
   State<AddNewExpence> createState() => _AddNewExpenceState();
@@ -10,7 +11,7 @@ class AddNewExpence extends StatefulWidget {
 
 class _AddNewExpenceState extends State<AddNewExpence> {
   final _titleController = TextEditingController();
-  final _amountCOntroller = TextEditingController();
+  final _amountController = TextEditingController();
 
   Category _selectedCategory = Category.leasure;
 
@@ -48,11 +49,49 @@ class _AddNewExpenceState extends State<AddNewExpence> {
     }
   }
 
+  //handle form submit
+  void _handleFormSubmit() {
+    //form validations
+    //convert the amount in to a double
+    final userAmount = double.parse(_amountController.text.trim());
+    if (_titleController.text.trim().isEmpty || userAmount <= 0) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return (AlertDialog(
+            title: const Text("Enter valid Data"),
+            content: const Text(
+              "Please enter valida data for the title and the amount here the title cant be emplty and the amount cant be less than zero",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("close"),
+              ),
+            ],
+          ));
+        },
+      );
+    } else {
+      //create a newexpence
+      ExpenceModel newExpence = ExpenceModel(
+        title: _titleController.text.trim(),
+        amount: userAmount,
+        date: _selectedDate,
+        category: _selectedCategory,
+      );
+      widget.onAddExpence(newExpence);
+      Navigator.pop(context);
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
     _titleController.dispose();
-    _amountCOntroller.dispose();
+    _amountController.dispose();
   }
 
   @override
@@ -76,7 +115,7 @@ class _AddNewExpenceState extends State<AddNewExpence> {
               //amount
               Expanded(
                 child: TextField(
-                  controller: _amountCOntroller,
+                  controller: _amountController,
                   decoration: const InputDecoration(
                     helperText: "Enter the amount",
                     label: Text("Amount"),
@@ -124,7 +163,9 @@ class _AddNewExpenceState extends State<AddNewExpence> {
                   children: [
                     //close the model button
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
 
                       style: const ButtonStyle(
                         backgroundColor: WidgetStatePropertyAll(
@@ -135,7 +176,7 @@ class _AddNewExpenceState extends State<AddNewExpence> {
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: _handleFormSubmit,
                       style: const ButtonStyle(
                         backgroundColor: WidgetStatePropertyAll(Colors.green),
                       ),
